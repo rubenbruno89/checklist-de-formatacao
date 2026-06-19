@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checklist de Formatação Profissional</title>
+    <title>Checklist de Formatação Profissional - Editável</title>
     <style>
         :root {
             --primary-color: #2563eb;
             --secondary-color: #1e40af;
             --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
             --text-color: #1f2937;
@@ -163,6 +165,26 @@
             transform: translateY(-1px);
         }
 
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+        }
+
         .btn-outline {
             background: transparent;
             border: 2px solid var(--primary-color);
@@ -172,6 +194,11 @@
         .btn-outline:hover {
             background: var(--primary-color);
             color: white;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.85rem;
         }
 
         .checklist-section {
@@ -222,6 +249,7 @@
             padding: 12px 0;
             border-bottom: 1px solid #f3f4f6;
             transition: background 0.2s;
+            position: relative;
         }
 
         .checklist-item:hover {
@@ -249,11 +277,69 @@
             flex: 1;
             cursor: pointer;
             font-size: 1.05rem;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .item-label:hover {
+            background: #e5e7eb;
         }
 
         .item-label.checked {
             text-decoration: line-through;
             color: #9ca3af;
+        }
+
+        .item-label.editing {
+            background: #fef3c7;
+            border: 2px solid var(--warning-color);
+            outline: none;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 5px;
+            margin-left: 10px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .checklist-item:hover .item-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .add-item-btn {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            background: #f3f4f6;
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #6b7280;
+            transition: all 0.3s;
+        }
+
+        .add-item-btn:hover {
+            background: #e5e7eb;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
         }
 
         .notes-section {
@@ -309,7 +395,7 @@
         }
 
         @media print {
-            .actions, .progress-container {
+            .actions, .progress-container, .item-actions, .add-item-btn {
                 display: none;
             }
             .section-content {
@@ -330,6 +416,9 @@
             h1 {
                 font-size: 1.5rem;
             }
+            .item-actions {
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -338,7 +427,7 @@
 <div class="container">
     <header>
         <h1>🛠️ Checklist de Formatação</h1>
-        <p class="subtitle">Organização profissional para atendimento técnico</p>
+        <p class="subtitle">Organização profissional para atendimento técnico - Versão Editável</p>
     </header>
 
     <div class="client-info">
@@ -382,492 +471,17 @@
             <button class="btn btn-primary" onclick="window.print()">
                 🖨️ Imprimir / PDF
             </button>
+            <button class="btn btn-warning" onclick="restoreDefault()">
+                🔄 Restaurar Padrão
+            </button>
             <button class="btn btn-outline" onclick="resetChecklist()">
-                🔄 Limpar Tudo
+                🗑️ Limpar Tudo
             </button>
         </div>
     </div>
 
-    <!-- SEÇÃO 1: BACKUP -->
-    <div class="checklist-section">
-        <div class="section-header" onclick="toggleSection(this)">
-            <div class="section-title">
-                <span class="section-icon">💾</span>
-                <span>1. Backup de Dados</span>
-            </div>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-content">
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="backup1" data-section="Backup">
-                </div>
-                <label class="item-label" for="backup1">Verificar espaço disponível no HD/SSD externo</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="backup2" data-section="Backup">
-                </div>
-                <label class="item-label" for="backup2">Fazer backup dos documentos da pasta "Meus Documentos"</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="backup3" data-section="Backup">
-                </div>
-                <label class="item-label" for="backup3">Backup das fotos e vídeos (Pastas Imagens/Vídeos)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="backup4" data-section="Backup">
-                </div>
-                <label class="item-label" for="backup4">Exportar favoritos e senhas do navegador</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="backup5" data-section="Backup">
-                </div>
-                <label class="item-label" for="backup5">Salvar arquivos da Área de Trabalho</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="backup6" data-section="Backup">
-                </div>
-                <label class="item-label" for="backup6">Verificar e-mails locais (Outlook/Thunderbird)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="backup7" data-section="Backup">
-                </div>
-                <label class="item-label" for="backup7">Confirmar com cliente se há outros dados importantes</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEÇÃO 2: PREPARAÇÃO -->
-    <div class="checklist-section">
-        <div class="section-header" onclick="toggleSection(this)">
-            <div class="section-title">
-                <span class="section-icon">🔧</span>
-                <span>2. Preparação para Formatação</span>
-            </div>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-content">
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="prep1" data-section="Preparação">
-                </div>
-                <label class="item-label" for="prep1">Criar pendrive bootável com Windows atualizado</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="prep2" data-section="Preparação">
-                </div>
-                <label class="item-label" for="prep2">Baixar drivers essenciais (vídeo, rede, chipset)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="prep3" data-section="Preparação">
-                </div>
-                <label class="item-label" for="prep3">Anotar chave de licença do Windows/Office (se houver)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="prep4" data-section="Preparação">
-                </div>
-                <label class="item-label" for="prep4">Verificar saúde do HD/SSD (CrystalDiskInfo)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="prep5" data-section="Preparação">
-                </div>
-                <label class="item-label" for="prep5">Limpeza física básica (teclado, tela, portas)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="prep6" data-section="Preparação">
-                </div>
-                <label class="item-label" for="prep6">Conectar notebook na energia (se aplicável)</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEÇÃO 3: FORMATAÇÃO -->
-    <div class="checklist-section">
-        <div class="section-header" onclick="toggleSection(this)">
-            <div class="section-title">
-                <span class="section-icon">⚙️</span>
-                <span>3. Processo de Formatação</span>
-            </div>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-content">
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="fmt1" data-section="Formatação">
-                </div>
-                <label class="item-label" for="fmt1">Acessar BIOS/UEFI e configurar boot pelo USB</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="fmt2" data-section="Formatação">
-                </div>
-                <label class="item-label" for="fmt2">Excluir partições antigas e criar novas</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="fmt3" data-section="Formatação">
-                </div>
-                <label class="item-label" for="fmt3">Instalar Windows (aguardar conclusão)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="fmt4" data-section="Formatação">
-                </div>
-                <label class="item-label" for="fmt4">Configurar região, idioma e teclado (ABNT2)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="fmt5" data-section="Formatação">
-                </div>
-                <label class="item-label" for="fmt5">Criar conta de usuário local ou Microsoft</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="fmt6" data-section="Formatação">
-                </div>
-                <label class="item-label" for="fmt6">Ativar Windows com licença digital/chave</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="fmt7" data-section="Formatação">
-                </div>
-                <label class="item-label" for="fmt7">Verificar resolução de tela correta</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="fmt8" data-section="Formatação">
-                </div>
-                <label class="item-label" for="fmt8">Configurar opções de energia (não suspender)</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEÇÃO 4: DRIVERS -->
-    <div class="checklist-section">
-        <div class="section-header" onclick="toggleSection(this)">
-            <div class="section-title">
-                <span class="section-icon">🔄</span>
-                <span>4. Drivers e Atualizações</span>
-            </div>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-content">
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="drv1" data-section="Drivers">
-                </div>
-                <label class="item-label" for="drv1">Instalar driver de chipset</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="drv2" data-section="Drivers">
-                </div>
-                <label class="item-label" for="drv2">Instalar driver de vídeo (NVIDIA/AMD/Intel)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="drv3" data-section="Drivers">
-                </div>
-                <label class="item-label" for="drv3">Instalar driver de áudio</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="drv4" data-section="Drivers">
-                </div>
-                <label class="item-label" for="drv4">Instalar driver de rede/Wi-Fi</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="drv5" data-section="Drivers">
-                </div>
-                <label class="item-label" for="drv5">Instalar driver de touchpad (se notebook)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="drv6" data-section="Drivers">
-                </div>
-                <label class="item-label" for="drv6">Rodar Windows Update até não haver mais atualizações</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="drv7" data-section="Drivers">
-                </div>
-                <label class="item-label" for="drv7">Verificar Gerenciador de Dispositivos (sem erros)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="drv8" data-section="Drivers">
-                </div>
-                <label class="item-label" for="drv8">Reiniciar o sistema após todas as atualizações</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEÇÃO 5: SOFTWARES -->
-    <div class="checklist-section">
-        <div class="section-header" onclick="toggleSection(this)">
-            <div class="section-title">
-                <span class="section-icon">📦</span>
-                <span>5. Softwares Essenciais</span>
-            </div>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-content">
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="soft1" data-section="Softwares">
-                </div>
-                <label class="item-label" for="soft1">Navegador Web (Chrome/Firefox/Edge)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="soft2" data-section="Softwares">
-                </div>
-                <label class="item-label" for="soft2">Pacote Office (Word, Excel, PowerPoint)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="soft3" data-section="Softwares">
-                </div>
-                <label class="item-label" for="soft3">Leitor de PDF (Adobe Reader ou alternativo)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="soft4" data-section="Softwares">
-                </div>
-                <label class="item-label" for="soft4">Compactador/descompactador (7-Zip ou WinRAR)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="soft5" data-section="Softwares">
-                </div>
-                <label class="item-label" for="soft5">Antivírus (Windows Defender ou instalado)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="soft6" data-section="Softwares">
-                </div>
-                <label class="item-label" for="soft6">Codecs de vídeo/áudio (K-Lite ou VLC)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="soft7" data-section="Softwares">
-                </div>
-                <label class="item-label" for="soft7">Java Runtime (se necessário para sistemas específicos)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="soft8" data-section="Softwares">
-                </div>
-                <label class="item-label" for="soft8">Softwares específicos solicitados pelo cliente</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEÇÃO 6: CONFIGURAÇÕES -->
-    <div class="checklist-section">
-        <div class="section-header" onclick="toggleSection(this)">
-            <div class="section-title">
-                <span class="section-icon">⚡</span>
-                <span>6. Configurações do Sistema</span>
-            </div>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-content">
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="cfg1" data-section="Configurações">
-                </div>
-                <label class="item-label" for="cfg1">Configurar fuso horário e hora automática</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="cfg2" data-section="Configurações">
-                </div>
-                <label class="item-label" for="cfg2">Ajustar configurações de privacidade</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="cfg3" data-section="Configurações">
-                </div>
-                <label class="item-label" for="cfg3">Desativar programas desnecessários na inicialização</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="cfg4" data-section="Configurações">
-                </div>
-                <label class="item-label" for="cfg4">Configurar plano de energia (alto desempenho/balanceado)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="cfg5" data-section="Configurações">
-                </div>
-                <label class="item-label" for="cfg5">Ajustar tamanho dos ícones e barra de tarefas</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="cfg6" data-section="Configurações">
-                </div>
-                <label class="item-label" for="cfg6">Configurar impressora padrão (se houver)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="cfg7" data-section="Configurações">
-                </div>
-                <label class="item-label" for="cfg7">Criar ponto de restauração do sistema</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="cfg8" data-section="Configurações">
-                </div>
-                <label class="item-label" for="cfg8">Organizar área de trabalho com atalhos úteis</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEÇÃO 7: RESTAURAÇÃO -->
-    <div class="checklist-section">
-        <div class="section-header" onclick="toggleSection(this)">
-            <div class="section-title">
-                <span class="section-icon">📂</span>
-                <span>7. Restauração de Dados</span>
-            </div>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-content">
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="rest1" data-section="Restauração">
-                </div>
-                <label class="item-label" for="rest1">Copiar documentos de volta para "Meus Documentos"</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="rest2" data-section="Restauração">
-                </div>
-                <label class="item-label" for="rest2">Restaurar fotos e vídeos nas pastas corretas</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="rest3" data-section="Restauração">
-                </div>
-                <label class="item-label" for="rest3">Importar favoritos do navegador</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="rest4" data-section="Restauração">
-                </div>
-                <label class="item-label" for="rest4">Configurar e-mails (Outlook/Thunderbird/Webmail)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="rest5" data-section="Restauração">
-                </div>
-                <label class="item-label" for="rest5">Verificar integridade dos arquivos restaurados</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="rest6" data-section="Restauração">
-                </div>
-                <label class="item-label" for="rest6">Apagar backup temporário após confirmação do cliente</label>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEÇÃO 8: TESTES FINAIS -->
-    <div class="checklist-section">
-        <div class="section-header" onclick="toggleSection(this)">
-            <div class="section-title">
-                <span class="section-icon">✅</span>
-                <span>8. Testes Finais e Entrega</span>
-            </div>
-            <span class="toggle-icon">▼</span>
-        </div>
-        <div class="section-content">
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test1" data-section="Testes">
-                </div>
-                <label class="item-label" for="test1">Testar conexão com a internet (Wi-Fi e Cabo)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test2" data-section="Testes">
-                </div>
-                <label class="item-label" for="test2">Testar áudio (alto-falantes e microfone)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test3" data-section="Testes">
-                </div>
-                <label class="item-label" for="test3">Testar webcam</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test4" data-section="Testes">
-                </div>
-                <label class="item-label" for="test4">Testar portas USB (pen drive, mouse)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test5" data-section="Testes">
-                </div>
-                <label class="item-label" for="test5">Testar Bluetooth (se houver)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test6" data-section="Testes">
-                </div>
-                <label class="item-label" for="test6">Verificar funcionamento do touchpad/teclado</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test7" data-section="Testes">
-                </div>
-                <label class="item-label" for="test7">Testar impressão (se impressora disponível)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test8" data-section="Testes">
-                </div>
-                <label class="item-label" for="test8">Verificar temperatura do sistema (HWMonitor)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test9" data-section="Testes">
-                </div>
-                <label class="item-label" for="test9">Limpeza final externa do equipamento</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test10" data-section="Testes">
-                </div>
-                <label class="item-label" for="test10">Explicar ao cliente o que foi feito</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test11" data-section="Testes">
-                </div>
-                <label class="item-label" for="test11">Entregar termo de garantia (se aplicável)</label>
-            </div>
-            <div class="checklist-item">
-                <div class="checkbox-wrapper">
-                    <input type="checkbox" id="test12" data-section="Testes">
-                </div>
-                <label class="item-label" for="test12">Coletar assinatura/confirmação do cliente</label>
-            </div>
-        </div>
+    <div id="checklistContainer">
+        <!-- As seções serão geradas dinamicamente pelo JavaScript -->
     </div>
 
     <div class="notes-section">
@@ -876,26 +490,163 @@
     </div>
 
     <footer>
-        <p>Checklist criado para organização técnica | Salvo automaticamente no navegador</p>
+        <p>Checklist editável | Salvo automaticamente no navegador | Clique nos itens para editar</p>
     </footer>
 </div>
 
 <div id="toast" class="toast">Copiado para a área de transferência!</div>
 
 <script>
-    // Carregar dados salvos ao iniciar
+    // Dados padrão do checklist
+    const defaultChecklist = [
+        {
+            title: "💾 Backup de Dados",
+            icon: "💾",
+            items: [
+                "Verificar espaço disponível no HD/SSD externo",
+                "Fazer backup dos documentos da pasta 'Meus Documentos'",
+                "Backup das fotos e vídeos (Pastas Imagens/Vídeos)",
+                "Exportar favoritos e senhas do navegador",
+                "Salvar arquivos da Área de Trabalho",
+                "Verificar e-mails locais (Outlook/Thunderbird)",
+                "Confirmar com cliente se há outros dados importantes"
+            ]
+        },
+        {
+            title: "🔧 Preparação para Formatação",
+            icon: "🔧",
+            items: [
+                "Criar pendrive bootável com Windows atualizado",
+                "Baixar drivers essenciais (vídeo, rede, chipset)",
+                "Anotar chave de licença do Windows/Office (se houver)",
+                "Verificar saúde do HD/SSD (CrystalDiskInfo)",
+                "Limpeza física básica (teclado, tela, portas)",
+                "Conectar notebook na energia (se aplicável)"
+            ]
+        },
+        {
+            title: "⚙️ Processo de Formatação",
+            icon: "⚙️",
+            items: [
+                "Acessar BIOS/UEFI e configurar boot pelo USB",
+                "Excluir partições antigas e criar novas",
+                "Instalar Windows (aguardar conclusão)",
+                "Configurar região, idioma e teclado (ABNT2)",
+                "Criar conta de usuário local ou Microsoft",
+                "Ativar Windows com licença digital/chave",
+                "Verificar resolução de tela correta",
+                "Configurar opções de energia (não suspender)"
+            ]
+        },
+        {
+            title: "🔄 Drivers e Atualizações",
+            icon: "🔄",
+            items: [
+                "Instalar driver de chipset",
+                "Instalar driver de vídeo (NVIDIA/AMD/Intel)",
+                "Instalar driver de áudio",
+                "Instalar driver de rede/Wi-Fi",
+                "Instalar driver de touchpad (se notebook)",
+                "Rodar Windows Update até não haver mais atualizações",
+                "Verificar Gerenciador de Dispositivos (sem erros)",
+                "Reiniciar o sistema após todas as atualizações"
+            ]
+        },
+        {
+            title: "📦 Softwares Essenciais",
+            icon: "📦",
+            items: [
+                "Navegador Web (Chrome/Firefox/Edge)",
+                "Pacote Office (Word, Excel, PowerPoint)",
+                "Leitor de PDF (Adobe Reader ou alternativo)",
+                "Compactador/descompactador (7-Zip ou WinRAR)",
+                "Antivírus (Windows Defender ou instalado)",
+                "Codecs de vídeo/áudio (K-Lite ou VLC)",
+                "Java Runtime (se necessário para sistemas específicos)",
+                "Softwares específicos solicitados pelo cliente"
+            ]
+        },
+        {
+            title: "⚡ Configurações do Sistema",
+            icon: "⚡",
+            items: [
+                "Configurar fuso horário e hora automática",
+                "Ajustar configurações de privacidade",
+                "Desativar programas desnecessários na inicialização",
+                "Configurar plano de energia (alto desempenho/balanceado)",
+                "Ajustar tamanho dos ícones e barra de tarefas",
+                "Configurar impressora padrão (se houver)",
+                "Criar ponto de restauração do sistema",
+                "Organizar área de trabalho com atalhos úteis"
+            ]
+        },
+        {
+            title: "📂 Restauração de Dados",
+            icon: "📂",
+            items: [
+                "Copiar documentos de volta para 'Meus Documentos'",
+                "Restaurar fotos e vídeos nas pastas corretas",
+                "Importar favoritos do navegador",
+                "Configurar e-mails (Outlook/Thunderbird/Webmail)",
+                "Verificar integridade dos arquivos restaurados",
+                "Apagar backup temporário após confirmação do cliente"
+            ]
+        },
+        {
+            title: "✅ Testes Finais e Entrega",
+            icon: "✅",
+            items: [
+                "Testar conexão com a internet (Wi-Fi e Cabo)",
+                "Testar áudio (alto-falantes e microfone)",
+                "Testar webcam",
+                "Testar portas USB (pen drive, mouse)",
+                "Testar Bluetooth (se houver)",
+                "Verificar funcionamento do touchpad/teclado",
+                "Testar impressão (se impressora disponível)",
+                "Verificar temperatura do sistema (HWMonitor)",
+                "Limpeza final externa do equipamento",
+                "Explicar ao cliente o que foi feito",
+                "Entregar termo de garantia (se aplicável)",
+                "Coletar assinatura/confirmação do cliente"
+            ]
+        }
+    ];
+
+    let checklistData = [];
+    let checkboxStates = {};
+
+    // Inicializar
     window.onload = function() {
         loadData();
+        renderChecklist();
         updateProgress();
         
-        // Definir data atual se estiver vazia
         const dateInput = document.getElementById('serviceDate');
         if (!dateInput.value) {
             dateInput.valueAsDate = new Date();
         }
     };
 
-    // Salvar dados automaticamente
+    // Carregar dados salvos
+    function loadData() {
+        const saved = localStorage.getItem('techChecklistEditable');
+        if (saved) {
+            const data = JSON.parse(saved);
+            checklistData = data.checklist || [...defaultChecklist];
+            checkboxStates = data.checkboxes || {};
+            
+            document.getElementById('clientName').value = data.clientName || '';
+            document.getElementById('clientPhone').value = data.clientPhone || '';
+            document.getElementById('equipmentType').value = data.equipmentType || '';
+            document.getElementById('serviceDate').value = data.serviceDate || '';
+            document.getElementById('observations').value = data.observations || '';
+        } else {
+            checklistData = [...defaultChecklist];
+            checkboxStates = {};
+        }
+    }
+
+    // Salvar dados
     function saveData() {
         const data = {
             clientName: document.getElementById('clientName').value,
@@ -903,94 +654,163 @@
             equipmentType: document.getElementById('equipmentType').value,
             serviceDate: document.getElementById('serviceDate').value,
             observations: document.getElementById('observations').value,
-            checkboxes: {}
+            checklist: checklistData,
+            checkboxes: checkboxStates
         };
-
-        // Salvar estado de todos os checkboxes
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            data.checkboxes[cb.id] = cb.checked;
-        });
-
-        localStorage.setItem('techChecklist', JSON.stringify(data));
+        localStorage.setItem('techChecklistEditable', JSON.stringify(data));
     }
 
-    // Carregar dados salvos
-    function loadData() {
-        const saved = localStorage.getItem('techChecklist');
-        if (saved) {
-            const data = JSON.parse(saved);
-            
-            document.getElementById('clientName').value = data.clientName || '';
-            document.getElementById('clientPhone').value = data.clientPhone || '';
-            document.getElementById('equipmentType').value = data.equipmentType || '';
-            document.getElementById('serviceDate').value = data.serviceDate || '';
-            document.getElementById('observations').value = data.observations || '';
+    // Renderizar checklist
+    function renderChecklist() {
+        const container = document.getElementById('checklistContainer');
+        container.innerHTML = '';
 
-            if (data.checkboxes) {
-                Object.keys(data.checkboxes).forEach(id => {
-                    const cb = document.getElementById(id);
-                    if (cb) {
-                        cb.checked = data.checkboxes[id];
-                        updateLabelStyle(cb);
-                    }
-                });
-            }
+        checklistData.forEach((section, sectionIndex) => {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'checklist-section';
+            
+            const header = document.createElement('div');
+            header.className = 'section-header';
+            header.onclick = function() { toggleSection(this); };
+            
+            header.innerHTML = `
+                <div class="section-title">
+                    <span class="section-icon">${section.icon}</span>
+                    <span>${section.title}</span>
+                </div>
+                <span class="toggle-icon">▼</span>
+            `;
+            
+            const content = document.createElement('div');
+            content.className = 'section-content';
+            
+            section.items.forEach((item, itemIndex) => {
+                const itemId = `item_${sectionIndex}_${itemIndex}`;
+                const isChecked = checkboxStates[itemId] || false;
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'checklist-item';
+                itemDiv.innerHTML = `
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="${itemId}" ${isChecked ? 'checked' : ''} onchange="updateCheckboxState('${itemId}', this.checked)">
+                    </div>
+                    <div class="item-label ${isChecked ? 'checked' : ''}" 
+                         contenteditable="true" 
+                         onblur="updateItemText(${sectionIndex}, ${itemIndex}, this.innerText)"
+                         onfocus="this.classList.add('editing')"
+                         onblur="this.classList.remove('editing')">
+                        ${item}
+                    </div>
+                    <div class="item-actions">
+                        <button class="action-btn" onclick="deleteItem(${sectionIndex}, ${itemIndex})" title="Remover item">🗑️</button>
+                    </div>
+                `;
+                
+                content.appendChild(itemDiv);
+            });
+            
+            // Botão para adicionar novo item
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-item-btn';
+            addBtn.innerHTML = '➕ Adicionar novo item';
+            addBtn.onclick = function() { addItem(sectionIndex); };
+            content.appendChild(addBtn);
+            
+            sectionDiv.appendChild(header);
+            sectionDiv.appendChild(content);
+            container.appendChild(sectionDiv);
+        });
+    }
+
+    // Atualizar estado do checkbox
+    function updateCheckboxState(itemId, checked) {
+        checkboxStates[itemId] = checked;
+        const label = document.getElementById(itemId).closest('.checklist-item').querySelector('.item-label');
+        if (checked) {
+            label.classList.add('checked');
+        } else {
+            label.classList.remove('checked');
+        }
+        updateProgress();
+        saveData();
+    }
+
+    // Atualizar texto do item
+    function updateItemText(sectionIndex, itemIndex, newText) {
+        checklistData[sectionIndex].items[itemIndex] = newText.trim();
+        saveData();
+    }
+
+    // Adicionar novo item
+    function addItem(sectionIndex) {
+        const newItem = prompt('Digite o texto do novo item:');
+        if (newItem && newItem.trim()) {
+            checklistData[sectionIndex].items.push(newItem.trim());
+            renderChecklist();
+            saveData();
+            showToast('✅ Item adicionado com sucesso!');
         }
     }
 
-    // Atualizar progresso
-    function updateProgress() {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        const checked = document.querySelectorAll('input[type="checkbox"]:checked');
-        const percent = checkboxes.length > 0 ? Math.round((checked.length / checkboxes.length) * 100) : 0;
-
-        document.getElementById('progressBar').style.width = percent + '%';
-        document.getElementById('progressPercent').textContent = percent + '% (' + checked.length + '/' + checkboxes.length + ')';
-        
-        saveData();
+    // Deletar item
+    function deleteItem(sectionIndex, itemIndex) {
+        if (confirm('Tem certeza que deseja remover este item?')) {
+            checklistData[sectionIndex].items.splice(itemIndex, 1);
+            renderChecklist();
+            saveData();
+            showToast('🗑️ Item removido!');
+        }
     }
 
     // Alternar seção
     function toggleSection(header) {
         const content = header.nextElementSibling;
         const icon = header.querySelector('.toggle-icon');
-        
         content.classList.toggle('collapsed');
         icon.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
     }
 
-    // Atualizar estilo do label quando checkbox muda
-    function updateLabelStyle(checkbox) {
-        const label = checkbox.closest('.checklist-item').querySelector('.item-label');
-        if (checkbox.checked) {
-            label.classList.add('checked');
-        } else {
-            label.classList.remove('checked');
+    // Atualizar progresso
+    function updateProgress() {
+        let totalItems = 0;
+        let checkedItems = 0;
+        
+        checklistData.forEach((section, sectionIndex) => {
+            section.items.forEach((item, itemIndex) => {
+                totalItems++;
+                const itemId = `item_${sectionIndex}_${itemIndex}`;
+                if (checkboxStates[itemId]) {
+                    checkedItems++;
+                }
+            });
+        });
+        
+        const percent = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
+        document.getElementById('progressBar').style.width = percent + '%';
+        document.getElementById('progressPercent').textContent = percent + '% (' + checkedItems + '/' + totalItems + ')';
+    }
+
+    // Restaurar padrão
+    function restoreDefault() {
+        if (confirm('Isso irá restaurar o checklist para o padrão original. Deseja continuar?')) {
+            checklistData = [...defaultChecklist];
+            checkboxStates = {};
+            renderChecklist();
+            updateProgress();
+            saveData();
+            showToast('🔄 Checklist restaurado para o padrão!');
         }
     }
 
-    // Adicionar eventos aos checkboxes
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-        cb.addEventListener('change', function() {
-            updateLabelStyle(this);
-            updateProgress();
-        });
-    });
-
-    // Adicionar eventos aos inputs de texto para salvar
-    document.querySelectorAll('input, textarea, select').forEach(input => {
-        input.addEventListener('input', saveData);
-    });
-
-    // Resetar checklist
+    // Resetar tudo
     function resetChecklist() {
-        if (confirm('Tem certeza que deseja limpar todos os dados?')) {
-            localStorage.removeItem('techChecklist');
+        if (confirm('Tem certeza que deseja limpar TODOS os dados? Isso não pode ser desfeito.')) {
+            localStorage.removeItem('techChecklistEditable');
             location.reload();
         }
     }
 
-    // Mostrar toast notification
+    // Mostrar toast
     function showToast(message) {
         const toast = document.getElementById("toast");
         toast.textContent = message;
@@ -998,7 +818,7 @@
         setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
     }
 
-    // COPIAR PARA TEAMS
+    // Copiar para Teams
     function copyToTeams() {
         const clientName = document.getElementById('clientName').value || 'Não informado';
         const clientPhone = document.getElementById('clientPhone').value || 'Não informado';
@@ -1006,43 +826,29 @@
         const serviceDate = document.getElementById('serviceDate').value || new Date().toLocaleDateString('pt-BR');
         const observations = document.getElementById('observations').value || 'Nenhuma observação';
         
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        const checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
-        const totalCount = checkboxes.length;
-        const percent = Math.round((checkedCount / totalCount) * 100);
-
+        let totalItems = 0;
+        let checkedItems = 0;
         let text = `📋 *CHECKLIST DE FORMATAÇÃO* - ${serviceDate}\n\n`;
         text += `👤 *Cliente:* ${clientName}\n`;
         text += `📱 *Telefone:* ${clientPhone}\n`;
         text += `💻 *Equipamento:* ${equipmentType}\n`;
-        text += `📊 *Progresso:* ${checkedCount}/${totalCount} concluídos (${percent}%)\n\n`;
-        text += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
-        // Agrupar por seção
-        const sections = {};
-        checkboxes.forEach(cb => {
-            const section = cb.getAttribute('data-section') || 'Geral';
-            if (!sections[section]) {
-                sections[section] = [];
-            }
-            const label = cb.closest('.checklist-item').querySelector('.item-label').textContent;
-            const status = cb.checked ? '✅' : '❌';
-            sections[section].push(`${status} ${label}`);
+        checklistData.forEach((section, sectionIndex) => {
+            text += `\n*${section.title.toUpperCase()}*\n`;
+            section.items.forEach((item, itemIndex) => {
+                totalItems++;
+                const itemId = `item_${sectionIndex}_${itemIndex}`;
+                const isChecked = checkboxStates[itemId] || false;
+                if (isChecked) checkedItems++;
+                text += `${isChecked ? '✅' : '❌'} ${item}\n`;
+            });
         });
 
-        // Montar texto por seção
-        for (const [sectionName, items] of Object.entries(sections)) {
-            text += `*${sectionName.toUpperCase()}*\n`;
-            items.forEach(item => {
-                text += `${item}\n`;
-            });
-            text += `\n`;
-        }
-
-        text += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+        const percent = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
+        text += `\n📊 *Progresso:* ${checkedItems}/${totalItems} concluídos (${percent}%)\n`;
+        text += `\n━━━━━━━━━━━━━━━━━━━━━━\n\n`;
         text += `📝 *OBSERVAÇÕES:*\n${observations}\n`;
 
-        // Copiar para clipboard
         navigator.clipboard.writeText(text).then(() => {
             showToast('✅ Checklist copiado! Cole no Teams (Ctrl+V)');
         }).catch(err => {
@@ -1050,7 +856,13 @@
             showToast('❌ Erro ao copiar. Tente novamente.');
         });
     }
+
+    // Salvar ao modificar campos de texto
+    document.querySelectorAll('input, textarea, select').forEach(input => {
+        input.addEventListener('input', saveData);
+    });
 </script>
 
 </body>
 </html>
+
